@@ -2,19 +2,22 @@ package aapi
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 )
 
-
 const (
-	GET    = "GET"
-	POST   = "POST"
-	PUT    = "PUT"
+	// GET :
+	GET = "GET"
+	// POST :
+	POST = "POST"
+	// PUT :
+	PUT = "PUT"
+	// DELETE :
 	DELETE = "DELETE"
 )
 
+// Resource :
 type Resource interface {
 	Get(values url.Values) (int, interface{})
 	Post(values url.Values) (int, interface{})
@@ -23,30 +26,40 @@ type Resource interface {
 }
 
 type (
-	GetNotSupported    struct{}
-	PostNotSupported   struct{}
-	PutNotSupported    struct{}
+	// GetNotSupported :
+	GetNotSupported struct{}
+	// PostNotSupported :
+	PostNotSupported struct{}
+	// PutNotSupported :
+	PutNotSupported struct{}
+	// DeleteNotSupported :
 	DeleteNotSupported struct{}
 )
 
+// Get :
 func (GetNotSupported) Get(values url.Values) (int, interface{}) {
 	return 405, map[string]string{"status": "405", "msg": "Method Not allowed"}
 }
 
+// Post :
 func (PostNotSupported) Post(values url.Values) (int, interface{}) {
 	return 405, map[string]string{"status": "405", "msg": "Method Not allowed"}
 }
 
+// Put :
 func (PutNotSupported) Put(values url.Values) (int, interface{}) {
 	return 405, map[string]string{"status": "405", "msg": "Method Not allowed"}
 }
 
+// Delete :
 func (DeleteNotSupported) Delete(values url.Values) (int, interface{}) {
 	return 405, map[string]string{"status": "405", "msg": "Method Not allowed"}
 }
 
+// API :
 type API struct{}
 
+// Abort :
 func (api *API) Abort(rw http.ResponseWriter, statusCode int) {
 	rw.WriteHeader(statusCode)
 }
@@ -84,11 +97,12 @@ func (api *API) requestHandler(resource Resource) http.HandlerFunc {
 	}
 }
 
+// AddResource :
 func (api *API) AddResource(resource Resource, path string) {
 	http.HandleFunc(path, api.requestHandler(resource))
 }
 
-func (api *API) Start(port int) {
-	portString := fmt.Sprintf(":%d", port)
-	http.ListenAndServe(portString, nil)
+// Start :
+func (api *API) Start(port string) {
+	http.ListenAndServe(":"+port, nil)
 }
