@@ -35,7 +35,7 @@ func main() {
 
     aapi.AddResource(indexResource, "/")
 
-    aapi.Start(8080)
+    aapi.Start("8080")
 }
 
 // Get : /
